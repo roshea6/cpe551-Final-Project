@@ -13,6 +13,6 @@ Packages that will most likely be needed:
 	<li>os</li>
 </ul
 
-A dataset for finger digits was found on Kaggle (https://www.kaggle.com/koryakinp/fingers). Supplementary data may be generated using my computer's web camera and a python script using OpenCV. Data for the basic math symbols will have to be entirely generated using the same method if I am able to get to that part. The dataset will be used to train a constitutional neural network using Keras with a Tensorflow back end to create a classifier network. The classifier network will be used to to classify how many fingers are held up in a video stream through a laptop camera using OpenCV.
+A dataset for finger digits was found on Kaggle (https://www.kaggle.com/koryakinp/fingers). Supplementary data may be generated using my computer's web camera and a python script using OpenCV. Data for the basic math symbols will have to be entirely generated using the same method if I am able to get to that part. The dataset will be used to train a convolutional neural network using Keras with a Tensorflow back end to create a classifier network. The classifier network will be used to to classify how many fingers are held up in a video stream through a laptop camera using OpenCV.
 
-If I am able to get to the calculator portion of the project I will store the prediction results in variables and use those variables to perform basic math operations and return the result to the user. 
+If I am able to get to the calculator portion of the project I will store the prediction results in variables and use those variables to perform basic math operations and return the result to the user.
