@@ -29,12 +29,26 @@ while(1):
 	# Plot rectangle on the frame to show the ROI
 	frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
 
+	# Just edge detection
+	edges = cv2.Canny(ROI, 100, 200)
+
 	# Subtract background from the image
 	fgMask = backSub.apply(ROI)
+
+	# Background subtraction then edge detection
+	backsub_then_edges = cv2.Canny(fgMask, 100, 200)
+
+	# Edge detection then background subtraction
+	edges_then_backsub = backSub.apply(edges)
+	
+
 
 	# frameRGB = frame[:,:,::-1]
 	cv2.imshow('img', frame)
 	cv2.imshow('ROI', fgMask)
+	cv2.imshow("Just edges", edges)
+	cv2.imshow("Backsub then edges", backsub_then_edges)
+	cv2.imshow("edges then backsub", edges_then_backsub)
 
 	# Hit q to exit out of the video feed
 	keyboard = cv2.waitKey(1)
