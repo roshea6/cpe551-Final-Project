@@ -8,7 +8,6 @@ from keras.layers import Dense, Conv2D, MaxPool2D, Dropout, Flatten
 from skimage import io
 from sklearn.model_selection import train_test_split
 
-from PIL import Image
 
 def read_data_from_dir(train_dir, test_dir):
     train_data = []
