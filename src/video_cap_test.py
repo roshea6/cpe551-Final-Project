@@ -1,5 +1,11 @@
 import cv2
 from matplotlib import pyplot as plt
+import tensorflow
+import keras 
+from keras.models import load_model
+import numpy as np
+
+model = load_model('../models/weights.h5')
 
 # Open the camera
 vid_cap = cv2.VideoCapture(0)
@@ -29,16 +35,49 @@ while(1):
 	# Plot rectangle on the frame to show the ROI
 	frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
 
+	# Just edge detection
+	edges = cv2.Canny(ROI, 100, 200)
+
 	# Subtract background from the image
 	fgMask = backSub.apply(ROI)
 
+	# # Background subtraction then edge detection
+	# backsub_then_edges = cv2.Canny(fgMask, 100, 200)
+
+	# # Edge detection then background subtraction
+	# edges_then_backsub = backSub.apply(edges)
+
+	gray_ROI = cv2.cvtColor(ROI, cv2.COLOR_RGB2GRAY)
+
+	# gray_ROI = cv2.GaussianBlur(gray_ROI,(5,5),0)
+
+	ret, thresh = cv2.threshold(gray_ROI, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+	# gray_ROI = cv2.adaptiveThreshold(gray_ROI,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
+
+
+
 	# frameRGB = frame[:,:,::-1]
 	cv2.imshow('img', frame)
-	cv2.imshow('ROI', fgMask)
+	cv2.imshow('ROI', gray_ROI)
+	# cv2.imshow("Just edges", edges)
+	# cv2.imshow("Thresh", thresh)
+	cv2.imshow("Backsub", fgMask)
+	# cv2.imshow("edges then backsub", edges_then_backsub)
+
+	pred_img = cv2.resize(gray_ROI, (128, 128))
+
+	arr_img = np.array(pred_img)
+
+	arr_img = arr_img.reshape(1, arr_img.shape[0], arr_img.shape[1], 1)
+
+	out = model.predict(arr_img)
+
+	print(out)
 
 	# Hit q to exit out of the video feed
 	keyboard = cv2.waitKey(1)
-	print(keyboard)
+
 	if keyboard == 'q' or keyboard == 113:
 		break
 
