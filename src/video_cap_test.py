@@ -5,7 +5,7 @@ import keras
 from keras.models import load_model
 import numpy as np
 
-model = load_model('../models/weights.h5')
+model = load_model('../models/thresh_model.h5')
 
 # Open the camera
 vid_cap = cv2.VideoCapture(0)
@@ -36,10 +36,10 @@ while(1):
 	frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
 
 	# Just edge detection
-	edges = cv2.Canny(ROI, 100, 200)
+	edges = cv2.Canny(ROI, 150, 200)
 
 	# Subtract background from the image
-	fgMask = backSub.apply(ROI)
+	# fgMask = backSub.apply(ROI)
 
 	# # Background subtraction then edge detection
 	# backsub_then_edges = cv2.Canny(fgMask, 100, 200)
@@ -49,23 +49,31 @@ while(1):
 
 	gray_ROI = cv2.cvtColor(ROI, cv2.COLOR_RGB2GRAY)
 
-	# gray_ROI = cv2.GaussianBlur(gray_ROI,(5,5),0)
+	# cv2.imshow("Thresh", gray_ROI)
+	# cv2.waitKey(0)
 
-	ret, thresh = cv2.threshold(gray_ROI, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+	ret, img = cv2.threshold(gray_ROI, 20, 255, cv2.THRESH_BINARY_INV)
 
-	# gray_ROI = cv2.adaptiveThreshold(gray_ROI,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
+	# cv2.imshow("Thresh", img)
+	# cv2.waitKey(0)
 
+	# im_floodfill = img.copy()
+	# h, w = img.shape[:2]
+	# mask = np.zeros((h+2, w+2), np.uint8)
+	# cv2.floodFill(im_floodfill, mask, (0,0), 255)
+	# im_floodfill_inv = cv2.bitwise_not(im_floodfill)
+	# img = img | im_floodfill_inv
 
 
 	# frameRGB = frame[:,:,::-1]
 	cv2.imshow('img', frame)
 	cv2.imshow('ROI', gray_ROI)
 	# cv2.imshow("Just edges", edges)
-	# cv2.imshow("Thresh", thresh)
-	cv2.imshow("Backsub", fgMask)
+	cv2.imshow("Thresh", img)
+	# cv2.imshow("Backsub", fgMask)
 	# cv2.imshow("edges then backsub", edges_then_backsub)
 
-	pred_img = cv2.resize(gray_ROI, (128, 128))
+	pred_img = cv2.resize(img, (128, 128))
 
 	arr_img = np.array(pred_img)
 
@@ -83,7 +91,7 @@ while(1):
 
 	# Hit s to save an image
 	if keyboard == 's' or keyboard == 115:
-		cv2.imwrite("../images/" + str(i) + ".png", fgMask)
+		cv2.imwrite("../test_images/" + str(i) + "_mine.png", edges)
 		i += 1
 
 vid_cap.release()
