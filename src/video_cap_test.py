@@ -5,94 +5,148 @@ import keras
 from keras.models import load_model
 import numpy as np
 
-model = load_model('../models/thresh_model.h5')
+# Global variables (AKA couldn't figure out a different way)
+bg = None # average background that will be subtracted from the image to isolate the hand in the image
 
-# Open the camera
-vid_cap = cv2.VideoCapture(0)
+#--------------------------------------------------
+# To find the running average over the background
+#--------------------------------------------------
+def run_avg(image, aWeight):
+    global bg
+    # initialize the background
+    if bg is None:
+        bg = image.copy().astype("float")
+        return
 
-#Check if the device was properly opened
-if not vid_cap.isOpened():
-	raise Exception("Couldn't open camera")
+    # compute weighted average, accumulate it and update the background
+    cv2.accumulateWeighted(image, bg, aWeight)
 
-# Background subtractor using mixture of gaussian method
-backSub = cv2.createBackgroundSubtractorMOG2()
+#---------------------------------------------
+# To segment the region of hand in the image
+#---------------------------------------------
+def segment(image, threshold=25):
+    global bg
+    # find the absolute difference between background and current frame
+    diff = cv2.absdiff(bg.astype("uint8"), image)
 
-i = 0
+    # threshold the diff image so that we get the foreground
+	# Only grab the second item that the threshold function returns which is the 
+	# actual thresholded image
+    thresholded = cv2.threshold(diff, threshold, 255, cv2.THRESH_BINARY)[1]
 
-# Rectangle params
-start_point = (50, 200) # Upper left corner
-end_point = (200, 350) # Bottom right corner
-color = (0, 255, 0)
-thickness = 3
+    # get the contours in the thresholded image
+    (cnts, _) = cv2.findContours(thresholded.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-while(1):
-	# Read picture
-	ret, frame = vid_cap.read()
+    # return None, if no contours detected
+    if len(cnts) == 0:
+        return
+    else:
+        # based on contour area, get the maximum contour which is the hand
+        segmented = max(cnts, key=cv2.contourArea)
+        return (thresholded, segmented)
 
-	# Grab region of interest from the frames
-	ROI = frame[200:350, 50:200]
+def startClassifier():
+	# Starting weight for the running average
+	avgWeight = .5
 
-	# Plot rectangle on the frame to show the ROI
-	frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
+	# Open the camera
+	vid_cap = cv2.VideoCapture(0)
 
-	# Just edge detection
-	edges = cv2.Canny(ROI, 150, 200)
+	#Check if the device was properly opened
+	if not vid_cap.isOpened():
+		raise Exception("Couldn't open camera")
+		exit()
 
-	# Subtract background from the image
-	# fgMask = backSub.apply(ROI)
+	# Rectangle params
+	top, bottom, right, left = 80, 230, 450, 600
+	rect_color = (0, 255, 0) # Green becasue it stands out
+	rect_thickness = 3
 
-	# # Background subtraction then edge detection
-	# backsub_then_edges = cv2.Canny(fgMask, 100, 200)
+	# Initilize number of frames to 0. The number will be used to capture the average background
+	# during the beginning of the run 
+	num_frames = 0
 
-	# # Edge detection then background subtraction
-	# edges_then_backsub = backSub.apply(edges)
+	# Start the video stream loop. Will quit if 'q' is pressed
+	while(1):
+		# Read picture in from the camera and store it in frame
+		ret, frame = vid_cap.read()
 
-	gray_ROI = cv2.cvtColor(ROI, cv2.COLOR_RGB2GRAY)
+		# Use flip to undo the mirroring of the image
+		# Makes positioning yourself in the capture frame more intuitive
+		frame = cv2.flip(frame, 1)
 
-	# cv2.imshow("Thresh", gray_ROI)
-	# cv2.waitKey(0)
+		# Make a clone of the frame to display later so we can alter frame
+		clone = frame.copy()
 
-	ret, img = cv2.threshold(gray_ROI, 20, 255, cv2.THRESH_BINARY_INV)
+		# Grab region of interest from the frame
+		ROI = frame[top:bottom, right:left]
 
-	# cv2.imshow("Thresh", img)
-	# cv2.waitKey(0)
+		# Convert the ROI to grayscale. Many of the opencv functions need the image to be in grayscale
+		# because they don't work with more than 1 color dimension
+		gray_ROI = cv2.cvtColor(ROI, cv2.COLOR_BGR2GRAY)
 
-	# im_floodfill = img.copy()
-	# h, w = img.shape[:2]
-	# mask = np.zeros((h+2, w+2), np.uint8)
-	# cv2.floodFill(im_floodfill, mask, (0,0), 255)
-	# im_floodfill_inv = cv2.bitwise_not(im_floodfill)
-	# img = img | im_floodfill_inv
+		# Use Gaussian blur to smooth the image a bit
+		gray_ROI = cv2.GaussianBlur(gray_ROI, (7,7), 0)
+
+		# Use the first 30 frames to build the average background. There should be nothing but the background
+		# in view during this to properly build an average background to subtract from the image
+		if num_frames < 30:
+			run_avg(gray_ROI, avgWeight)
+		else: # Background building is done. Use it isolate the hand so it can be classified
+			# Get the hand from the ROI 
+			# hand contains both the thresholded images and the segmented portion
+			# so we'll need to split it
+			hand = segment(gray_ROI)
+
+			# Check whether the segmentation actually produced something
+			if hand is not None:
+				# Split the hand into the thresholded and segmented images
+				# Thresholded will contain the actual thresholded image (the isolated hand)
+				# Segmented will contain the contour around the hand which we will draw to the screen to
+				# visualize what we're capturing as the hand
+				(thresholded, segmented) = hand
+
+				# Draw red contour lines around the hand in the image
+				cv2.drawContours(image = clone, contours = [segmented + (right, top)], contourIdx = -1, color = (0, 0, 255), thickness = 2)
+
+				# Display the thresholded image
+				cv2.imshow("Thresholded ROI", thresholded)
+		
+		# Draw the rectangle on the frame around the ROI
+		cv2.rectangle(clone, (left, top), (right, bottom), rect_color, rect_thickness)
+
+		# Increment the number of frames we've captured
+		num_frames += 1
+		
+		cv2.imshow("Video", clone)
+
+		# Get what key was pressed
+		keypress = cv2.waitKey(1) 
+
+		# If the key pressed was q quit out of the program. 113 is the ascii value of q
+		if keypress == 'q' or keypress == 113:
+			break
+
+		# Plot rectangle on the frame to show the ROI
+		# frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
+
+		# pred_img = cv2.resize(img, (128, 128))
+
+		# arr_img = np.array(pred_img)
+
+		# arr_img = arr_img.reshape(1, arr_img.shape[0], arr_img.shape[1], 1)
+
+		# out = model.predict(arr_img)
+
+		# print(out)
+
+		# Hit s to save an image
+		if keypress == 's' or keypress == 115:
+			cv2.imwrite("../test_images/" + str(i) + "_mine.png", edges)
+			i += 1
+
+	vid_cap.release()
+	cv2.destroyAllWindows()
 
 
-	# frameRGB = frame[:,:,::-1]
-	cv2.imshow('img', frame)
-	cv2.imshow('ROI', gray_ROI)
-	# cv2.imshow("Just edges", edges)
-	cv2.imshow("Thresh", img)
-	# cv2.imshow("Backsub", fgMask)
-	# cv2.imshow("edges then backsub", edges_then_backsub)
-
-	pred_img = cv2.resize(img, (128, 128))
-
-	arr_img = np.array(pred_img)
-
-	arr_img = arr_img.reshape(1, arr_img.shape[0], arr_img.shape[1], 1)
-
-	out = model.predict(arr_img)
-
-	print(out)
-
-	# Hit q to exit out of the video feed
-	keyboard = cv2.waitKey(1)
-
-	if keyboard == 'q' or keyboard == 113:
-		break
-
-	# Hit s to save an image
-	if keyboard == 's' or keyboard == 115:
-		cv2.imwrite("../test_images/" + str(i) + "_mine.png", edges)
-		i += 1
-
-vid_cap.release()
-cv2.destroyAllWindows()
+startClassifier()
