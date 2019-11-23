@@ -46,7 +46,8 @@ def segment(image, threshold=25):
         return (thresholded, segmented)
 
 def startClassifier():
-	model = load_model("../models/new_thresh_model.h5")
+	# Load the saved model
+	model = load_model("../models/my_thresh_model.h5")
 
 	# Starting weight for the running average
 	avgWeight = .5
@@ -58,6 +59,9 @@ def startClassifier():
 	if not vid_cap.isOpened():
 		raise Exception("Couldn't open camera")
 		exit()
+
+	# Used to save images to create training data
+	i = 0
 
 	# Rectangle params
 	top, bottom, right, left = 80, 230, 450, 600
@@ -144,13 +148,14 @@ def startClassifier():
 		if keypress == 'q' or keypress == 113:
 			break
 
-		# Plot rectangle on the frame to show the ROI
-		# frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
-
 		# Hit s to save an image
 		if keypress == 's' or keypress == 115:
-			cv2.imwrite("../test_images/" + str(i) + "_mine.png", edges)
+			resized = cv2.resize(thresholded, (128, 128))
+			cv2.imwrite("../training_images/" + str(i) + "_2.png", resized)
 			i += 1
+
+			if(i > 2000):
+				break;
 
 	# Close all windows and free the camera
 	vid_cap.release()
