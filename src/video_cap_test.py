@@ -8,11 +8,12 @@ import numpy as np
 # Global variables (AKA couldn't figure out a different way)
 bg = None # average background that will be subtracted from the image to isolate the hand in the image
 
-#--------------------------------------------------
-# To find the running average over the background
-#--------------------------------------------------
+# Find the average background of the region of interest so it can be subtracted
+# Takes in an image of the background and the starting weight for the average
+# Doesn't return anything just updates the background
 def run_avg(image, aWeight):
     global bg
+
     # initialize the background
     if bg is None:
         bg = image.copy().astype("float")
@@ -21,9 +22,8 @@ def run_avg(image, aWeight):
     # compute weighted average, accumulate it and update the background
     cv2.accumulateWeighted(image, bg, aWeight)
 
-#---------------------------------------------
-# To segment the region of hand in the image
-#---------------------------------------------
+
+# Segment the passed in image and return the thresholded image and the contours of the hand
 def segment(image, threshold=25):
     global bg
     # find the absolute difference between background and current frame
@@ -46,6 +46,8 @@ def segment(image, threshold=25):
         return (thresholded, segmented)
 
 def startClassifier():
+	model = load_model("../models/new_thresh_model.h5")
+
 	# Starting weight for the running average
 	avgWeight = .5
 
@@ -111,6 +113,21 @@ def startClassifier():
 
 				# Display the thresholded image
 				cv2.imshow("Thresholded ROI", thresholded)
+
+				# Resize the image to the proper size for the cnn
+				pred_img = cv2.resize(thresholded, (128, 128))
+
+				# Turn it into a numpy array
+				arr_img = np.array(pred_img)
+
+				# Add two extra dimensions to the array to make 1x128x18x1
+				# Not entirely sure why it needs the extra dimension but I get an error otherwise
+				arr_img = arr_img.reshape(1, arr_img.shape[0], arr_img.shape[1], 1)
+
+				# Predict what class the image is (How many fingers are being held up)
+				out = model.predict(arr_img)
+
+				print(out)
 		
 		# Draw the rectangle on the frame around the ROI
 		cv2.rectangle(clone, (left, top), (right, bottom), rect_color, rect_thickness)
@@ -130,21 +147,12 @@ def startClassifier():
 		# Plot rectangle on the frame to show the ROI
 		# frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
 
-		# pred_img = cv2.resize(img, (128, 128))
-
-		# arr_img = np.array(pred_img)
-
-		# arr_img = arr_img.reshape(1, arr_img.shape[0], arr_img.shape[1], 1)
-
-		# out = model.predict(arr_img)
-
-		# print(out)
-
 		# Hit s to save an image
 		if keypress == 's' or keypress == 115:
 			cv2.imwrite("../test_images/" + str(i) + "_mine.png", edges)
 			i += 1
 
+	# Close all windows and free the camera
 	vid_cap.release()
 	cv2.destroyAllWindows()
 
