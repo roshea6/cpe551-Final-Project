@@ -8,7 +8,29 @@ from keras.layers import Dense, Conv2D, MaxPool2D, Dropout, Flatten
 from skimage import io
 from sklearn.model_selection import train_test_split
 
+# Uses thresholding to remove the background from the hand training image and returns the 
+# Returns the thresholded image
+def preprocessImage(image):
+    img = image
 
+    # Threshold the image to remove the background and leave just the hand
+    # threshold bounds determined through testing. Can probably still be improved
+    ret, img = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
+
+    # Use floodfill to fill in gaps in the hand that thresholding may have created
+    # The thresholding already works quite well so this only helps a bit
+    # May actually want to leave this out to simulate real world imperfections in the training data
+    im_floodfill = img.copy()
+    h, w = img.shape[:2]
+    mask = np.zeros((h+2, w+2), np.uint8)
+    cv2.floodFill(im_floodfill, mask, (0,0), 255)
+    im_floodfill_inv = cv2.bitwise_not(im_floodfill)
+    img = img | im_floodfill_inv
+
+    return img
+
+# Reads data out of the passed in directories and returns the the training images, training labels
+# testing images, and testing labels
 def read_data_from_dir(train_dir, test_dir):
     train_data = []
     train_label = []
@@ -20,9 +42,10 @@ def read_data_from_dir(train_dir, test_dir):
     for img in train_dir:
         current_img = io.imread(img, as_gray=True) # Read in image as grayscale
 
-        # Do edge extraction here if necessary
-        current_img = cv2.Canny(current_img, 100, 200)
+        # Preprocess the current image
+        current_img = preprocessImage(current_img)
 
+        # Append the preprocessed image to the training data set
         train_data.append(current_img)
         train_label.append(img[-6]) # The class label for each image is 6th to last character in the file name
 
@@ -30,9 +53,10 @@ def read_data_from_dir(train_dir, test_dir):
     for img in test_dir:
         current_img = io.imread(img, as_gray=True) # Read in image as grayscale
 
-        # Do edge extraction here if necessary
-        current_img = cv2.Canny(current_img, 100, 200)
+        # Preprocess the current image
+        current_img = preprocessImage(current_img)
 
+        # Append the preprocessed image to the training data set
         test_data.append(current_img)
         test_label.append(img[-6]) # The class label for each image is 6th to last character in the file name
 
@@ -103,4 +127,4 @@ model.compile(optimizer='SGD', loss='categorical_crossentropy', metrics=['accura
 # Train the model with our data 
 model.fit(x = img_train, y = label_train, batch_size = 128, epochs = 10, validation_data=(img_test, label_test))
 
-model.save("../models/edges_model.h5")
+model.save("../models/new_thresh_model.h5")
