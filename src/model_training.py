@@ -11,6 +11,9 @@ from keras.callbacks import ModelCheckpoint
 from skimage import io
 from sklearn.model_selection import train_test_split
 
+tf.global_variables_initializer()
+
+
 class convNet(object):
     # Uses thresholding to remove the background from the hand training image and returns the 
     # Returns the thresholded image
@@ -77,7 +80,7 @@ class convNet(object):
     def trainModel(self, path):
         # File paths of training and testing images
         # Uses glob to grab all .png files in the directory
-        train_img_dir = glob.glob("../images/training_images/*.png")
+        train_img_dir = glob.glob("../training_images/*.png")
 
         # Get and display number and training and testing images
         num_train_imgs = len(train_img_dir)
@@ -130,6 +133,8 @@ class convNet(object):
         # Callback checkpoint to save the model's weights whenever it improves over the best
         checkpoint = ModelCheckpoint(path, monitor='accuracy', verbose=1, save_best_only=True, mode='auto', period=1)
 
+        print("Right before the training")
+
         # Train the model with our data 
         model.fit(x = img_train, y = label_train, batch_size = 128, epochs = 10, validation_data=(img_test, label_test), callbacks=[checkpoint])
 
@@ -165,12 +170,12 @@ if __name__ == '__main__':
     MODEL_LOAD_PATH = "../models/new_model.h5"
 
     # Test training the model
-    model = nn.trainModel(MODEL_SAVE_PATH)
+    # model = nn.trainModel(MODEL_SAVE_PATH)
 
-    # Make sure the model exists
-    if(model == None):
-        print("Model training failed")
-        exit()
+    # # Make sure the model exists
+    # if(model == None):
+    #     print("Model training failed")
+    #     exit()
 
     # Test loading the model that was just trained and saved
     model = nn.loadModel(MODEL_SAVE_PATH)
@@ -186,7 +191,7 @@ if __name__ == '__main__':
         # Grab a random sample from the 2000 images of each of the 6 classes
         num = rand.randint(0, 2000)
 
-        path = f'../images/training_images/{num}_{i}.png'
+        path = f'../training_images/{num}_{i}.png'
 
         # Convert the image to the proper format for the classifier to use
         img = nn.convertToModelFormat(path)

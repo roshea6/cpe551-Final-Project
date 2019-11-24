@@ -5,6 +5,9 @@ import keras
 from keras.models import load_model
 import numpy as np
 
+# Import class from model_training.py
+from model_training import convNet
+
 
 class realTimeDigitClassifier(object):
 
@@ -47,7 +50,10 @@ class realTimeDigitClassifier(object):
 
 	def startClassifier(self):
 		# Load the saved model
-		model = load_model("../models/my_thresh_model_no_floodfill.h5")
+		nn = convNet()
+
+		model = nn.loadModel('../models/my_thresh_model_no_floodfill.h5')
+		
 
 		# Starting weight for the running average
 		avgWeight = .5
@@ -140,9 +146,15 @@ class realTimeDigitClassifier(object):
 					arr_img = arr_img.reshape(1, arr_img.shape[0], arr_img.shape[1], 1)
 
 					# Predict what class the image is (How many fingers are being held up)
-					out = model.predict(arr_img)
+					pred = model.predict(arr_img)
 
-					print(out)
+					 # Convert it to its actual class
+					classes = pred.argmax(axis=-1)
+
+					# Draw the prediction on the screen
+					clone = cv2.putText(clone, f'Prediction: {classes[0]}' , (right, bottom + 20), cv2.FONT_HERSHEY_COMPLEX, .75, text_color, text_thickness, cv2.LINE_AA)
+
+
 			
 			# Draw the rectangle on the frame around the ROI
 			cv2.rectangle(clone, (left, top), (right, bottom), rect_color, rect_thickness)
