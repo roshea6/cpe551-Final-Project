@@ -112,7 +112,7 @@ class realTimeDigitClassifier(object):
 				hand = self.segment(gray_ROI)
 
 				# Draw instruction text on screen
-				clone = cv2.putText(clone, 'Put hand in box', (right, top - 7), cv2.FONT_HERSHEY_COMPLEX, .5, text_color, text_thickness, cv2.LINE_AA)
+				clone = cv2.putText(clone, 'Place hand in box', (right, top - 7), cv2.FONT_HERSHEY_COMPLEX, .5, text_color, text_thickness, cv2.LINE_AA)
 
 
 				# Check whether the segmentation actually produced something
