@@ -1,6 +1,7 @@
 import tensorflow as tf 
 import cv2, os, glob
 import numpy as np 
+import random as rand
 
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPool2D, Dropout, Flatten
@@ -145,20 +146,61 @@ class convNet(object):
 
     # Load the model from the passed in path and return it
     def loadModel(self, filename):
+        print(f"Loading model from {filename}")
+
         model = load_model('../models/my_thresh_model_no_floodfill.h5')
+
+        print("Model loaded!")
 
         return model
 
 
-nn = convNet() 
+# Used for testing. Run this file directly to test the training, loading, and prediction
+if __name__ == '__main__':
+    # Create the object
+    nn = convNet() 
 
-MODEL_SAVE_PATH = "../models/new_model.h5"
-MODEL_LOAD_PATH = "../models/my_thresh_model.h5"
+    # Paths to save and load model
+    MODEL_SAVE_PATH = "../models/new_model.h5"
+    MODEL_LOAD_PATH = "../models/new_model.h5"
 
-# model = nn.trainModel(MODEL_SAVE_PATH)
+    # Test training the model
+    model = nn.trainModel(MODEL_SAVE_PATH)
 
-model = nn.loadModel(MODEL_SAVE_PATH)
+    # Make sure the model exists
+    if(model == None):
+        print("Model training failed")
+        exit()
 
-img = nn.convertToModelFormat('../images/training_images/1000_3.png')
+    # Test loading the model that was just trained and saved
+    model = nn.loadModel(MODEL_SAVE_PATH)
 
-print(model.predict(img))
+    if(model == None):
+        print("Model loading failed")
+        exit()
+
+    print("Hit any key while clicked on the image window to move to the next image")
+
+    # Show how the model performs on 5 random samples from the dataset
+    for i in range(0, 6):
+        # Grab a random sample from the 2000 images of each of the 6 classes
+        num = rand.randint(0, 2000)
+
+        path = f'../images/training_images/{num}_{i}.png'
+
+        # Convert the image to the proper format for the classifier to use
+        img = nn.convertToModelFormat(path)
+
+        # Get the prediction of the image from the classifier
+        pred = model.predict(img)
+
+        # Convert it to its actual class
+        classes = pred.argmax(axis=-1)
+
+        # Display the prediction
+        print(f"Prediction: {classes[0]}")
+
+        # Load and show the image that was classified
+        img = cv2.imread(path)
+        cv2.imshow("Image to classify", img)
+        cv2.waitKey(0)
