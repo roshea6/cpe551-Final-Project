@@ -1,3 +1,32 @@
+"""
+Author: Ryan O'Shea
+
+Description: Class definition and associated testing code for neural network 
+class. Cabable of training a model, loading a model, and evaluating a model. The
+Test code in the main function should test all the functions in the class to make 
+the model and class are working as intended.
+
+********** IMPORTANT **********
+Training the model is very computationally demanding and should only be done on a 
+computer with a relatively powerful GPU and a fair amount of memory.
+
+I trained all my models on a computer with the following specs:
+CPU: Ryzen 5 1600
+GPU: GTX 1070
+RAM: 16GB DDR4
+
+I also attempted to train on my laptop that had a weak CPU, no GPU, and only 8GB
+of RAM and it was unable to run because tensorflow could not allocate enough memory.
+********** IMPORTANT **********
+
+If you need to change where models are saved to and loaded changes the following variables
+in the main funtion:
+    MODEL_SAVE_PATH 
+    MODEL_LOAD_PATH
+
+"""
+
+
 import tensorflow as tf 
 import cv2, os, glob
 import numpy as np 
@@ -11,9 +40,8 @@ from keras.callbacks import ModelCheckpoint
 from skimage import io
 from sklearn.model_selection import train_test_split
 
-tf.global_variables_initializer()
-
-
+# Class that can train a convolutional neural network using this projects dataset, load model,
+# and evaluate a model.
 class convNet(object):
     # Uses thresholding to remove the background from the hand training image and returns the 
     # Returns the thresholded image
@@ -170,15 +198,15 @@ if __name__ == '__main__':
     MODEL_LOAD_PATH = "../models/new_model.h5"
 
     # Test training the model
-    # model = nn.trainModel(MODEL_SAVE_PATH)
+    model = nn.trainModel(MODEL_SAVE_PATH)
 
-    # # Make sure the model exists
-    # if(model == None):
-    #     print("Model training failed")
-    #     exit()
+    # Make sure the model exists
+    if(model == None):
+        print("Model training failed")
+        exit()
 
     # Test loading the model that was just trained and saved
-    model = nn.loadModel(MODEL_SAVE_PATH)
+    model = nn.loadModel(MODEL_LOAD_PATH)
 
     if(model == None):
         print("Model loading failed")
