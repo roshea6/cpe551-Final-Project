@@ -1,7 +1,8 @@
 """
 Author: Ryan O'Shea
 
-Description: Class definition and associated testing code for neural network 
+Description: 
+Class definition and associated testing code for neural network 
 class. Cabable of training a model, loading a model, and evaluating a model. The
 Test code in the main function should test all the functions in the class to make 
 the model and class are working as intended.

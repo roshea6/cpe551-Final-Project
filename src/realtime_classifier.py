@@ -1,3 +1,20 @@
+"""
+Author: Ryan O'Shea
+
+Desciption:
+Class defition and associated testing code for the realTimeDigitClassifier class.
+Capable of calculating the average background, segmenting an image using that background 
+to isolate the foreground, and passing that segmented into the classifier. Test code 
+is in the main function should test various opencv functions to make they are working like
+we want them to. 
+
+********** IMPORTANT **********
+If you want to change the model that gets loaded then change the file path in the 
+nn.load_model call in the startClassifier() function.
+********** IMPORTANT **********
+"""
+
+
 import cv2
 from matplotlib import pyplot as plt
 import tensorflow
@@ -8,7 +25,9 @@ import numpy as np
 # Import class from model_training.py
 from model_training import convNet
 
-
+# Class for performing classification of how many fingers are currently being held up
+# in an image. Uses the convNet to classify passed in images. Uses an average background
+# and a number of opencv functions to segment the image of the hand to isolate it in the image.
 class realTimeDigitClassifier(object):
 
 	def __init__(self):
@@ -48,12 +67,16 @@ class realTimeDigitClassifier(object):
 			segmented = max(cnts, key=cv2.contourArea)
 			return (thresholded, segmented)
 
+	# Open a video feed, load the saved model, and classify images from the video feed with the model
 	def startClassifier(self):
 		# Load the saved model
 		nn = convNet()
 
 		model = nn.loadModel('../models/my_thresh_model_no_floodfill.h5')
 		
+		if(model == None):
+			print("No model loaded!")
+			exit()
 
 		# Starting weight for the running average
 		avgWeight = .5
@@ -186,6 +209,63 @@ class realTimeDigitClassifier(object):
 		cv2.destroyAllWindows()
 
 
-classifier = realTimeDigitClassifier()
+# Main function for testing various parts of the code
+if __name__ == '__main__':
+	# Test video camera
+	# Open the camera
+	vid_cap = cv2.VideoCapture(0)
 
-classifier.startClassifier()
+	#Check if the device was properly opened
+	if not vid_cap.isOpened():
+		raise Exception("Couldn't open camera")
+		exit()
+
+	ret, frame = vid_cap.read()
+
+	# Display image to make we can get images
+	cv2.imshow("Captured image", frame)
+
+	print("Hit any button to move to the next image test.")
+
+	# Wait until key is pressed
+	cv2.waitKey(0)
+
+
+	# Use flip to undo the mirroring of the image
+	# Makes positioning yourself in the capture frame more intuitive
+	frame = cv2.flip(frame, 1)
+
+	# Display image 
+	cv2.imshow("Flipped image", frame)
+
+	# Wait until key is pressed
+	cv2.waitKey(0)
+
+
+	# Test drawing of the capture box on the image
+	# Rectangle params
+	top, bottom, right, left = 80, 230, 450, 600
+	rect_color = (0, 255, 0) # Green becasue it stands out
+	rect_thickness = 3
+
+	# Draw the rectangle on the frame
+	cv2.rectangle(frame, (left, top), (right, bottom), rect_color, rect_thickness)
+
+	# Display image
+	cv2.imshow("Rectangle on image", frame)
+
+	# Wait until key is pressed
+	cv2.waitKey(0)
+
+	# Text params
+	text_color = (0, 0, 255) # Red
+	text_thickness = 1
+
+	# Draw the prediction on the screen
+	cv2.putText(frame, 'Test text!' , (right, bottom + 20), cv2.FONT_HERSHEY_COMPLEX, .75, text_color, text_thickness, cv2.LINE_AA)
+
+	# Display image
+	cv2.imshow("Text on image", frame)
+
+	# Wait until key is pressed
+	cv2.waitKey(0)
