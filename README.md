@@ -33,6 +33,7 @@ There were existing datasets out there for hands holding up different numbers of
 	<li>training_images
 		<ul>
 			<li>Contains the images used to train the models in the models folder. These can be used to train your own model. There are 12006 128x128 images of a hand showing the numbers 0 through 5 as fingers held up.</li>
+			<li>![alt text][media/dataset_banner.png]</li>
 		</ul>
 	</li>
 	<li>media
@@ -52,4 +53,11 @@ There were existing datasets out there for hands holding up different numbers of
 	<li>Run launch_classifier.py</li>
 	<li>Wait until the words above the box say "Place hand in box"</li>
 	<li>Place you hand in the box on the video feed to see what the classifier outputs!</li>
+</ol>
+
+## How to test functionality
+<ol>
+	<li>Run either realtime_classifier.py or model_training.py. Their main functions contain test code to test all the different functions of the classes.</li>
+	<li>Ensure that all the functionality is working as intended. There should be printed instructions and images that pop up to make sure everything is working</li>
+	<li>If everything looks good then you should good to go!</li>
 </ol>
