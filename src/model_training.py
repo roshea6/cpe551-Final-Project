@@ -29,7 +29,7 @@ in the main funtion:
 
 
 import tensorflow as tf 
-import cv2, os, glob
+import cv2, glob
 import numpy as np 
 import random as rand
 

@@ -16,7 +16,6 @@ nn.load_model call in the startClassifier() function.
 
 
 import cv2
-from matplotlib import pyplot as plt
 import tensorflow
 import keras 
 from keras.models import load_model
