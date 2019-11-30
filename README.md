@@ -47,6 +47,9 @@ There were existing datasets out there for hands holding up different numbers of
 ### Training Images
 ![Example Images](media/dataset_banner.png)
 
+### Model Training
+![Model Training](media/model_training.gif)
+
 ## How to use
 <ol>
 	<li>Clone this repository</li>
