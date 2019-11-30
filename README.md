@@ -34,7 +34,7 @@ There were existing datasets out there for hands holding up different numbers of
 	<li>training_images
 		<ul>
 			<li>Contains the images used to train the models in the models folder. These can be used to train your own model. There are 12006 128x128 images of a hand showing the numbers 0 through 5 as fingers held up.</li>
-			![Example Images](https://github.com/roshea6/cpe551-Final-Project/blob/master/media/dataset_banner.png)
+![Example Images](media/dataset_banner.png)
 		</ul>
 	</li>
 	<li>media
