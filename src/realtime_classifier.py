@@ -71,7 +71,7 @@ class realTimeDigitClassifier(object):
 		# Load the saved model
 		nn = convNet()
 
-		model = nn.loadModel('../models/my_thresh_model_no_floodfill.h5')
+		model = nn.loadModel('../models/thresh_model_no_floodfill.h5')
 		
 		if(model == None):
 			print("No model loaded!")

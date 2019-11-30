@@ -19,6 +19,9 @@ Final project for my Engineering Python course (CPE 551). A real time finger dig
 ## Background
 There were existing datasets out there for hands holding up different numbers of digits but I couldn't seem to get good results using existing datasets so I decided to generate my own. I created 2000 images for each number of fingers being held up to train my neural network on. I uploaded my dataset to kaggle here (https://www.kaggle.com/roshea6/finger-digits-05) so others could use it. My dataset already has the images segmented to fully isolate the hand in the image to make it more beginner friendly. The dataset was used to train a convolutional neural network using Keras with a Tensorflow back end to create a 6 class classifier network. The classifier network is used to classify how many fingers are held up in a video stream through a laptop camera using OpenCV.
 
+## Important!
+Please run all scripts from the source directory. The code uses relative paths to load models and if you run the script from outside the src directory it will break.
+
 ## Repository Structure
 <ul>
 	<li>src
@@ -50,6 +53,13 @@ There were existing datasets out there for hands holding up different numbers of
 ### Model Training
 ![Model Training](media/model_training.gif)
 
+### Model Testing
+![Model Testing](media/classifier_demo.gif)
+
+### Full Video
+![Model Testing(media/classifier_demo.gif)](https://youtu.be/xVFMzhv2tCw)
+
+
 ## How to use
 <ol>
 	<li>Clone this repository</li>
@@ -60,7 +70,7 @@ There were existing datasets out there for hands holding up different numbers of
 	<li>Install the required packages listed above</li>
 	<li>Test any of the functionality you want to by running the file directly</li>
 	<li>Make sure your camera is facing a wall or something that will be easy to build an average background with</li>
-	<li>Run launch_classifier.py</li>
+	<li>Run launch_classifier.py from within the src directory!</li>
 	<li>Wait until the words above the box say "Place hand in box"</li>
 	<li>Place you hand in the box on the video feed to see what the classifier outputs!</li>
 </ol>

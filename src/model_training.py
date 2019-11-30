@@ -182,7 +182,7 @@ class convNet(object):
     def loadModel(self, filename):
         print(f"Loading model from {filename}")
 
-        model = load_model('../models/my_thresh_model_no_floodfill.h5')
+        model = load_model(filename)
 
         print("Model loaded!")
 
