@@ -57,7 +57,7 @@ Please run all scripts from the source directory. The code uses relative paths t
 ![Model Testing](media/classifier_demo.gif)
 
 ### Full Video
-![Model Testing(media/classifier_demo.gif)](https://youtu.be/xVFMzhv2tCw)
+https://youtu.be/xVFMzhv2tCw
 
 
 ## How to use
