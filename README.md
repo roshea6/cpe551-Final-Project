@@ -13,6 +13,7 @@ Final project for my Engineering Python course (CPE 551). A real time finger dig
 	<li>skimage</li>
 	<li>sklearn</li>
 	<li>random</li>
+	<li>git lfs</li>
 </ul>
 
 ## Background
@@ -33,7 +34,7 @@ There were existing datasets out there for hands holding up different numbers of
 	<li>training_images
 		<ul>
 			<li>Contains the images used to train the models in the models folder. These can be used to train your own model. There are 12006 128x128 images of a hand showing the numbers 0 through 5 as fingers held up.</li>
-			![alt text][media/dataset_banner.png]
+			![alt text](media/dataset_banner.png)
 		</ul>
 	</li>
 	<li>media
@@ -46,8 +47,8 @@ There were existing datasets out there for hands holding up different numbers of
 ## How to use
 <ol>
 	<li>Clone this repository</li>
+	<li>Install git lfs and activate it for this repository</li>
 	<li>Install the required packages listed above</li>
-	<li>Extract the .h5 files in the models folder to the models folder</li>
 	<li>Test any of the functionality you want to by running the file directly</li>
 	<li>Make sure your camera is facing a wall or something that will be easy to build an average background with</li>
 	<li>Run launch_classifier.py</li>
