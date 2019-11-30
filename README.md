@@ -31,7 +31,7 @@ Please run all scripts from the source directory. The code uses relative paths t
 	</li>
 	<li>models
 		<ul>
-			<li>Contains the models I trained ad a .h5 model. These models can be loaded using the keras load_model function. They are zipped up so I can actually have them on github. Extract them to the models folder if you want to use them.</li>
+			<li>Contains the models I trained ad a .h5 model. These models can be loaded using the keras load_model function. They are stored both using git lfs and on the google drive listed below.</li>
 		</ul>
 	</li>
 	<li>training_images
@@ -66,6 +66,10 @@ https://youtu.be/xVFMzhv2tCw
 	<li>Install git lfs and activate it for this repository</li>
 	<ul>
 		<li>https://git-lfs.github.com/</li>
+	</ul>
+	<li>OR download the models from my google drive here:</li>
+	<ul>
+		<li>https://drive.google.com/open?id=1IOibuX-KsBnjdW9AyOzFeInmZ-ascH4g</li>
 	</ul>
 	<li>Install the required packages listed above</li>
 	<li>Test any of the functionality you want to by running the file directly</li>
