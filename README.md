@@ -1,6 +1,9 @@
 # cpe551-Final-Project (Real Time Finger Digit Classifier)
 Final project for my Engineering Python course (CPE 551). A real time finger digit classifier for determining how many fingers are held up on a hand. Uses a convolutional neural network trained on a dataset I created to determine how many fingers are being held up on a hand in an image.
 
+"I pledge my honor that I have abided by the Stevens Honor System"
+-Ryan O'Shea
+
 
 ## Required Python Packages:
 <ul>
@@ -46,7 +49,7 @@ Please run all scripts from the source directory. The code uses relative paths t
 	</li>
 </ul>
 
-## Example images and video
+## Example Images and Video
 ### Training Images
 ![Example Images](media/dataset_banner.png)
 
@@ -85,3 +88,13 @@ https://youtu.be/xVFMzhv2tCw
 	<li>Ensure that all the functionality is working as intended. There should be printed instructions and images that pop up to make sure everything is working</li>
 	<li>If everything looks good then you should be good to go!</li>
 </ol>
+
+## Acknowledgements
+I used a large number of online tutorials for specific parts of the code. Primarily the code that dealt with making a good convolutional neural network and the image processing techniques.
+<ul>
+	<li>OpenCV - https://opencv.org/</li>
+	<li>Tensorflow - https://www.tensorflow.org/</li>
+	<li>Keras - https://keras.io/</li>
+	<li>pyimagesearch - https://www.pyimagesearch.com/</li>
+	<li>Kaggle - https://www.kaggle.com/</li>
+</ul>
