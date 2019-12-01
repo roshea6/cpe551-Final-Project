@@ -46,7 +46,7 @@ Please run all scripts from the source directory. The code uses relative paths t
 	</li>
 </ul>
 
-## Examples images and video
+## Example images and video
 ### Training Images
 ![Example Images](media/dataset_banner.png)
 
@@ -60,7 +60,7 @@ Please run all scripts from the source directory. The code uses relative paths t
 https://youtu.be/xVFMzhv2tCw
 
 
-## How to use
+## How To Use
 <ol>
 	<li>Clone this repository</li>
 	<li>Install git lfs and activate it for this repository</li>
@@ -79,7 +79,7 @@ https://youtu.be/xVFMzhv2tCw
 	<li>Place your hand in the box on the video feed to see what the classifier outputs!</li>
 </ol>
 
-## How to test functionality
+## How To Test Functionality
 <ol>
 	<li>Run either realtime_classifier.py or model_training.py. Their main functions contain test code to test all the different functions of the classes.</li>
 	<li>Ensure that all the functionality is working as intended. There should be printed instructions and images that pop up to make sure everything is working</li>
