@@ -76,12 +76,12 @@ https://youtu.be/xVFMzhv2tCw
 	<li>Make sure your camera is facing a wall or something that will be easy to build an average background with</li>
 	<li>Run launch_classifier.py from within the src directory!</li>
 	<li>Wait until the words above the box say "Place hand in box"</li>
-	<li>Place you hand in the box on the video feed to see what the classifier outputs!</li>
+	<li>Place your hand in the box on the video feed to see what the classifier outputs!</li>
 </ol>
 
 ## How to test functionality
 <ol>
 	<li>Run either realtime_classifier.py or model_training.py. Their main functions contain test code to test all the different functions of the classes.</li>
 	<li>Ensure that all the functionality is working as intended. There should be printed instructions and images that pop up to make sure everything is working</li>
-	<li>If everything looks good then you should good to go!</li>
+	<li>If everything looks good then you should be good to go!</li>
 </ol>
